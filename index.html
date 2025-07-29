@@ -1,13 +1,39 @@
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React + TypeScript + Replit</title>
+    <title>EyeCare Manager - Eyeglasses Prescription Manager</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Manage eyeglasses prescriptions offline with PWA support" />
+    <meta name="theme-color" content="#3f51b5" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="EyeCare Manager" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/index.jsx"></script>
+    
+    <!-- Install prompt (hidden by default) -->
+    <button id="install-button" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; background: #3f51b5; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;">
+      Install App
+    </button>
   </body>
 </html>
