@@ -1,4 +1,4 @@
-run = "npm run dev"
+run = "npm run build"
 modules = ["nodejs-20"]
 hidden = [".config", "package-lock.json"]
 entrypoint = "index.html"
@@ -28,4 +28,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "npm run build"
