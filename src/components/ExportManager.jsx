@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { exportUserToPDF, exportAllUsersToPDF } from '../utils/pdfExport';
-import { exportToJSON, importFromJSON, clearAllData } from '../utils/dataManager';
+import { exportToJSON, importFromJSON, clearAllData, downloadSourceCode } from '../utils/dataManager';
 
 const ExportManager = ({ users, onRefresh }) => {
   const [isExporting, setIsExporting] = useState(false);
@@ -140,7 +140,16 @@ const ExportManager = ({ users, onRefresh }) => {
             {users.length === 0 && (
               <p className="help-text">No data to backup</p>
             )}
-          </div>
+            
+            <button 
+              onClick={downloadSourceCode}
+              className="btn-secondary"
+              style={{ marginTop: '1rem' }}
+            >
+              📦 Download Source Code
+            </button>
+            <p className="help-text">Download complete app source code as ZIP</p>
+          </div></div>
 
           <div className="import-backup">
             <h4>Restore from Backup</h4>

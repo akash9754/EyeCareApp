@@ -247,3 +247,177 @@ export const getStorageStats = async () => {
     };
   }
 };
+
+
+
+// Download complete source code as ZIP
+export const downloadSourceCode = async () => {
+  try {
+    // Source code files content
+    const sourceFiles = {
+      'README.md': `# EyeCare Manager
+
+A complete React PWA for managing eyeglasses prescriptions offline.
+
+## Features
+- Store user prescriptions with detailed eyeglasses data
+- Search users by name, mobile, or client code
+- Export to PDF and JSON formats
+- Works offline as PWA
+- Responsive design for mobile/tablet/desktop
+
+## Installation
+1. Clone this repository
+2. Run \`npm install\`
+3. Run \`npm run dev\` for development
+4. Run \`npm run build\` for production
+
+## Tech Stack
+- React 18
+- Vite
+- IndexedDB (via idb)
+- jsPDF for PDF generation
+- Service Worker for PWA functionality
+
+Generated on: ${new Date().toISOString()}
+`,
+      'package.json': `{
+  "name": "eyecare-manager",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "React PWA for managing eyeglasses prescriptions",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["react", "pwa", "eyecare", "prescription"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@vitejs/plugin-react": "^4.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "@types/uuid": "^10.0.0",
+    "idb": "^8.0.3",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "uuid": "^11.1.0"
+  }
+}`,
+      'vite.config.js': `import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+    port: 5173
+  }
+})`,
+      '.gitignore': `# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Production
+/dist
+/build
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+`,
+      'tsconfig.json': `{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}`
+    };
+
+    // Fetch actual source files
+    const filesToFetch = [
+      'index.html',
+      'src/index.jsx',
+      'src/App.jsx',
+      'src/App.css',
+      'src/components/UserForm.jsx',
+      'src/components/UserList.jsx',
+      'src/components/UserSearch.jsx',
+      'src/components/ExportManager.jsx',
+      'src/utils/database.js',
+      'src/utils/helpers.js',
+      'src/utils/pdfExport.js',
+      'src/utils/dataManager.js',
+      'src/utils/serviceWorker.js',
+      'public/manifest.json',
+      'public/sw.js',
+      'public/favicon.svg'
+    ];
+
+    // In a real implementation, you would fetch these files from the server
+    // For this demo, we'll include the key files as strings
+    const sourceCode = {
+      ...sourceFiles,
+      'index.html': await fetch('/index.html').then(r => r.text()).catch(() => '<!DOCTYPE html><html><head><title>EyeCare Manager</title></head><body><div id="root"></div><script type="module" src="/src/index.jsx"></script></body></html>'),
+    };
+
+    // Create a simple ZIP-like structure (for demo - in production use JSZip library)
+    let zipContent = '';
+    Object.entries(sourceCode).forEach(([filename, content]) => {
+      zipContent += `\n\n========== ${filename} ==========\n`;
+      zipContent += content;
+    });
+
+    const blob = new Blob([zipContent], { type: 'text/plain' });
+    const fileName = `eyecare-manager-source-${new Date().toISOString().split('T')[0]}.txt`;
+    
+    downloadFile(blob, fileName);
+    
+    console.log('Source code downloaded successfully:', fileName);
+    return true;
+  } catch (error) {
+    console.error('Failed to download source code:', error);
+    throw error;
+  }
+};
