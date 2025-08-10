@@ -218,12 +218,19 @@ export const exportUserSummaryToPDF = async (user) => {
     doc.text(`OD: ${formatPrescription(user.rightEye)}`, 5, 53);
     doc.text(`OS: ${formatPrescription(user.leftEye)}`, 5, 58);
     
+    let yPosition = 63;
     if (user.pupilDistance) {
-      doc.text(`PD: ${user.pupilDistance}mm`, 5, 63);
+      doc.text(`PD: ${user.pupilDistance}mm`, 5, yPosition);
+      yPosition += 5;
+    }
+    
+    if (user.frameOption) {
+      doc.text(`Frame: ${user.frameOption}`, 5, yPosition);
+      yPosition += 5;
     }
     
     // Footer
-    doc.text(`Date: ${formatDate(user.createdAt)}`, 5, 75);
+    doc.text(`Date: ${formatDate(user.createdAt)}`, 5, yPosition + 7);
     
     const fileName = `summary_${sanitizeFileName(user.name)}.pdf`;
     doc.save(fileName);

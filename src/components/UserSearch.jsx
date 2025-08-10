@@ -11,7 +11,7 @@ const UserSearch = ({ users, onEdit }) => {
 
   useEffect(() => {
     performSearch();
-  }, [searchTerm, searchField, activeUsers]);
+  }, [searchTerm, searchField, users]);
 
   const performSearch = () => {
     if (!searchTerm.trim()) {

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { getUsersByStatus, reactivateUser } from '../utils/database';
 
@@ -67,12 +66,12 @@ const CompletedTasks = ({ onRefresh }) => {
         {completedUsers.map(user => (
           <div key={user.id} className="user-card completed-card">
             <div className="completed-badge">✅ COMPLETED</div>
-            
+
             <div className="user-header">
               <h3>{user.name}</h3>
               <span className="client-code">#{user.clientCode}</span>
             </div>
-            
+
             <div className="user-contact">
               <p>📱 {user.mobile}</p>
               {user.email && <p>📧 {user.email}</p>}
@@ -94,6 +93,12 @@ const CompletedTasks = ({ onRefresh }) => {
                 </div>
               )}
             </div>
+            {user.frameOption && (
+              <div className="eye-data">
+                <strong>Frame:</strong>
+                <span>{user.frameOption}</span>
+              </div>
+            )}
 
             {user.notes && (
               <div className="user-notes">

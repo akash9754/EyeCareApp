@@ -22,6 +22,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
       addPower: ''
     },
     pupilDistance: '',
+    frameOption: '',
     notes: '',
     status: 'active',
     createdAt: new Date().toISOString(),
@@ -312,6 +313,23 @@ const UserForm = ({ user, onSave, onCancel }) => {
               onChange={handleInputChange}
               placeholder="e.g., 62.0mm"
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="frameOption">Frame Option</label>
+            <select
+              id="frameOption"
+              name="frameOption"
+              value={formData.frameOption}
+              onChange={handleInputChange}
+            >
+              <option value="">Select frame option...</option>
+              <option value="Supra metal">Supra metal</option>
+              <option value="Sheet">Sheet</option>
+              <option value="Metal">Metal</option>
+              <option value="Sheetmetal">Sheetmetal</option>
+              <option value="Rimless">Rimless</option>
+            </select>
           </div>
         </section>
 

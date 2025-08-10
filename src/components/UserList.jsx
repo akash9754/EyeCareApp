@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { deleteUser, markUserAsCompleted } from '../utils/database';
 
 const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
@@ -74,7 +73,7 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
               <h3>{user.name}</h3>
               <span className="client-code">#{user.clientCode}</span>
             </div>
-            
+
             <div className="user-contact">
               <p>📱 {user.mobile}</p>
               {user.email && <p>📧 {user.email}</p>}
@@ -96,6 +95,10 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
                 </div>
               )}
             </div>
+
+            {user.frameOption && (
+              <p><strong>Frame:</strong> {user.frameOption}</p>
+            )}
 
             {user.notes && (
               <div className="user-notes">
