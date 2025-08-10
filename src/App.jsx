@@ -11,7 +11,6 @@ import { registerSW } from './utils/serviceWorker';
 
 export default function App() {
   const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [activeTab, setActiveTab] = useState('list');
   const [isLoading, setIsLoading] = useState(true);
@@ -37,7 +36,6 @@ export default function App() {
     try {
       const allUsers = await getAllUsers();
       setUsers(allUsers);
-      setFilteredUsers(allUsers);
     } catch (error) {
       console.error('Failed to load users:', error);
     }
@@ -59,9 +57,7 @@ export default function App() {
     setActiveTab('form');
   };
 
-  const handleSearch = (searchResults) => {
-    setFilteredUsers(searchResults);
-  };
+  
 
   if (isLoading) {
     return (
@@ -117,7 +113,7 @@ export default function App() {
       <main className="app-main">
         {activeTab === 'list' && (
           <UserList 
-            users={filteredUsers}
+            users={users}
             onEdit={handleEditUser}
             onRefresh={loadUsers}
             onAddUser={handleAddUser}
@@ -144,7 +140,6 @@ export default function App() {
         {activeTab === 'search' && (
           <UserSearch 
             users={users}
-            onSearch={handleSearch}
             onEdit={handleEditUser}
           />
         )}

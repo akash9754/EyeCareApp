@@ -1,23 +1,25 @@
 
 import React, { useState, useEffect } from 'react';
 
-const UserSearch = ({ users, onSearch, onEdit }) => {
+const UserSearch = ({ users, onEdit }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState('all');
   const [results, setResults] = useState([]);
 
+  // Filter only active users for search
+  const activeUsers = users.filter(user => (user.status || 'active') === 'active');
+
   useEffect(() => {
     performSearch();
-  }, [searchTerm, searchField, users]);
+  }, [searchTerm, searchField, activeUsers]);
 
   const performSearch = () => {
     if (!searchTerm.trim()) {
       setResults([]);
-      onSearch([]);
       return;
     }
 
-    const filtered = users.filter(user => {
+    const filtered = activeUsers.filter(user => {
       const term = searchTerm.toLowerCase();
       
       switch (searchField) {
@@ -40,13 +42,11 @@ const UserSearch = ({ users, onSearch, onEdit }) => {
     });
 
     setResults(filtered);
-    onSearch(filtered);
   };
 
   const clearSearch = () => {
     setSearchTerm('');
     setResults([]);
-    onSearch(users);
   };
 
   const formatPrescription = (eye) => {
