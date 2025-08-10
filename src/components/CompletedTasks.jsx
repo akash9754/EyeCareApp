@@ -3,11 +3,19 @@ import { getUsersByStatus, reactivateUser } from '../utils/database';
 
 const CompletedTasks = ({ onRefresh }) => {
   const [completedUsers, setCompletedUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [reactivateConfirm, setReactivateConfirm] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
+  const [filterByFrame, setFilterByFrame] = useState('all');
 
   useEffect(() => {
     loadCompletedUsers();
   }, []);
+
+  useEffect(() => {
+    applyFiltersAndSort();
+  }, [completedUsers, searchTerm, sortBy, filterByFrame]);
 
   const loadCompletedUsers = async () => {
     try {
@@ -16,6 +24,57 @@ const CompletedTasks = ({ onRefresh }) => {
     } catch (error) {
       console.error('Failed to load completed users:', error);
     }
+  };
+
+  const applyFiltersAndSort = () => {
+    let filtered = [...completedUsers];
+
+    // Apply search filter
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(user =>
+        user.name.toLowerCase().includes(term) ||
+        user.mobile.includes(term) ||
+        user.clientCode.toLowerCase().includes(term) ||
+        user.email?.toLowerCase().includes(term)
+      );
+    }
+
+    // Apply frame filter
+    if (filterByFrame !== 'all') {
+      filtered = filtered.filter(user => user.frameOption === filterByFrame);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.completedAt || b.createdAt) - new Date(a.completedAt || a.createdAt);
+        case 'oldest':
+          return new Date(a.completedAt || a.createdAt) - new Date(b.completedAt || b.createdAt);
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'clientCode':
+          return a.clientCode.localeCompare(b.clientCode);
+        default:
+          return 0;
+      }
+    });
+
+    setFilteredUsers(filtered);
+  };
+
+  const getUniqueFrameOptions = () => {
+    const frames = completedUsers
+      .filter(user => user.frameOption)
+      .map(user => user.frameOption);
+    return [...new Set(frames)].sort();
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSortBy('newest');
+    setFilterByFrame('all');
   };
 
   const handleReactivate = async (userId) => {
@@ -62,8 +121,64 @@ const CompletedTasks = ({ onRefresh }) => {
         <p className="completed-info">Read-only view of delivered/completed orders</p>
       </div>
 
+      {/* Filter and Sort Controls */}
+      <div className="completed-filters">
+        <div className="filter-row">
+          <div className="search-group">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name, mobile, client code, or email..."
+              className="search-input"
+            />
+            {searchTerm && (
+              <button onClick={() => setSearchTerm('')} className="clear-search">
+                ✕
+              </button>
+            )}
+          </div>
+
+          <div className="filter-controls">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="sort-select"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="name">Name (A-Z)</option>
+              <option value="clientCode">Client Code</option>
+            </select>
+
+            <select
+              value={filterByFrame}
+              onChange={(e) => setFilterByFrame(e.target.value)}
+              className="frame-filter"
+            >
+              <option value="all">All Frames</option>
+              {getUniqueFrameOptions().map(frame => (
+                <option key={frame} value={frame}>{frame}</option>
+              ))}
+            </select>
+
+            <button onClick={clearFilters} className="clear-filters">
+              Clear Filters
+            </button>
+          </div>
+        </div>
+
+        <div className="filter-results">
+          <span>
+            Showing {filteredUsers.length} of {completedUsers.length} completed tasks
+            {searchTerm && ` for "${searchTerm}"`}
+            {filterByFrame !== 'all' && ` with ${filterByFrame} frame`}
+          </span>
+        </div>
+      </div>
+
       <div className="users-grid">
-        {completedUsers.map(user => (
+        {filteredUsers.map(user => (
           <div key={user.id} className="user-card completed-card">
             <div className="completed-badge">✅ COMPLETED</div>
 
