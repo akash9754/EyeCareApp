@@ -419,6 +419,50 @@ body {
   font-size: 0.85rem;
 }
 
+/* Completed Tasks Styles */
+.completed-tasks {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.completed-tasks.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.completed-info {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.completed-card {
+  position: relative;
+  opacity: 0.9;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.completed-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #28a745;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.completed-card .user-header h3 {
+  color: #495057;
+}
+
+.completed-card .prescription-summary {
+  background: #e9ecef;
+}
+
 /* Search Component */
 .user-search {
   max-width: 1000px;

@@ -50,6 +50,11 @@ export const saveUser = async (userData) => {
     const tx = database.transaction(STORE_NAME, 'readwrite');
     const store = tx.objectStore(STORE_NAME);
     
+    // Add status if not present (for new users)
+    if (!userData.status) {
+      userData.status = 'active';
+    }
+    
     const result = await store.put(userData);
     await tx.complete;
     
@@ -193,6 +198,10 @@ export const importUsers = async (users) => {
     
     // Add each user
     for (const user of users) {
+      // Add status if not present
+      if (!user.status) {
+        user.status = 'active';
+      }
       await store.put(user);
     }
     
@@ -200,6 +209,51 @@ export const importUsers = async (users) => {
     console.log('Users imported successfully');
   } catch (error) {
     console.error('Failed to import users:', error);
+    throw error;
+  }
+};
+
+// Get users by status
+export const getUsersByStatus = async (status = 'active') => {
+  try {
+    const allUsers = await getAllUsers();
+    return allUsers.filter(user => (user.status || 'active') === status);
+  } catch (error) {
+    console.error('Failed to get users by status:', error);
+    throw error;
+  }
+};
+
+// Mark user as completed
+export const markUserAsCompleted = async (userId) => {
+  try {
+    const user = await getUserById(userId);
+    if (user) {
+      user.status = 'completed';
+      user.completedAt = new Date().toISOString();
+      user.updatedAt = new Date().toISOString();
+      await saveUser(user);
+      console.log('User marked as completed:', userId);
+    }
+  } catch (error) {
+    console.error('Failed to mark user as completed:', error);
+    throw error;
+  }
+};
+
+// Reactivate completed user (move back to active)
+export const reactivateUser = async (userId) => {
+  try {
+    const user = await getUserById(userId);
+    if (user) {
+      user.status = 'active';
+      delete user.completedAt;
+      user.updatedAt = new Date().toISOString();
+      await saveUser(user);
+      console.log('User reactivated:', userId);
+    }
+  } catch (error) {
+    console.error('Failed to reactivate user:', error);
     throw error;
   }
 };

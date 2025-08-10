@@ -23,6 +23,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
     },
     pupilDistance: '',
     notes: '',
+    status: 'active',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
   });
@@ -32,11 +33,15 @@ const UserForm = ({ user, onSave, onCancel }) => {
 
   useEffect(() => {
     if (user) {
-      setFormData({ ...user });
+      setFormData({ 
+        ...user,
+        status: user.status || 'active'
+      });
     } else {
       setFormData(prev => ({
         ...prev,
-        clientCode: generateClientCode()
+        clientCode: generateClientCode(),
+        status: 'active'
       }));
     }
   }, [user]);

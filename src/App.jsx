@@ -5,6 +5,7 @@ import UserForm from './components/UserForm';
 import UserList from './components/UserList';
 import UserSearch from './components/UserSearch';
 import ExportManager from './components/ExportManager';
+import CompletedTasks from './components/CompletedTasks';
 import { initDB, getAllUsers } from './utils/database';
 import { registerSW } from './utils/serviceWorker';
 
@@ -85,7 +86,13 @@ export default function App() {
           className={activeTab === 'list' ? 'active' : ''}
           onClick={() => setActiveTab('list')}
         >
-          📋 Users
+          📋 Active
+        </button>
+        <button 
+          className={activeTab === 'completed' ? 'active' : ''}
+          onClick={() => setActiveTab('completed')}
+        >
+          ✅ Completed
         </button>
         <button 
           className={activeTab === 'form' ? 'active' : ''}
@@ -114,6 +121,12 @@ export default function App() {
             onEdit={handleEditUser}
             onRefresh={loadUsers}
             onAddUser={handleAddUser}
+          />
+        )}
+        
+        {activeTab === 'completed' && (
+          <CompletedTasks 
+            onRefresh={loadUsers}
           />
         )}
         

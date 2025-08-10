@@ -1,9 +1,13 @@
 
 import React, { useState } from 'react';
-import { deleteUser } from '../utils/database';
+import { deleteUser, markUserAsCompleted } from '../utils/database';
 
 const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [completeConfirm, setCompleteConfirm] = useState(null);
+
+  // Filter only active users
+  const activeUsers = users.filter(user => (user.status || 'active') === 'active');
 
   const handleDelete = async (userId) => {
     try {
@@ -13,6 +17,17 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
     } catch (error) {
       console.error('Failed to delete user:', error);
       alert('Failed to delete user. Please try again.');
+    }
+  };
+
+  const handleComplete = async (userId) => {
+    try {
+      await markUserAsCompleted(userId);
+      onRefresh();
+      setCompleteConfirm(null);
+    } catch (error) {
+      console.error('Failed to mark user as completed:', error);
+      alert('Failed to mark user as completed. Please try again.');
     }
   };
 
@@ -29,7 +44,7 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
     return parts.length > 0 ? parts.join(', ') : 'No prescription data';
   };
 
-  if (users.length === 0) {
+  if (activeUsers.length === 0) {
     return (
       <div className="user-list empty">
         <div className="empty-state">
@@ -46,14 +61,14 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
   return (
     <div className="user-list">
       <div className="list-header">
-        <h2>📋 Users ({users.length})</h2>
+        <h2>📋 Active Users ({activeUsers.length})</h2>
         <button onClick={onAddUser} className="btn-primary">
           ➕ Add User
         </button>
       </div>
 
       <div className="users-grid">
-        {users.map(user => (
+        {activeUsers.map(user => (
           <div key={user.id} className="user-card">
             <div className="user-header">
               <h3>{user.name}</h3>
@@ -104,12 +119,44 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
                 ✏️ Edit
               </button>
               <button 
+                onClick={() => setCompleteConfirm(user.id)}
+                className="btn-primary"
+                title="Mark as completed/delivered"
+              >
+                ✅ Complete
+              </button>
+              <button 
                 onClick={() => setDeleteConfirm(user.id)}
                 className="btn-danger"
               >
                 🗑️ Delete
               </button>
             </div>
+
+            {/* Complete Task Confirmation Modal */}
+            {completeConfirm === user.id && (
+              <div className="modal-overlay">
+                <div className="modal">
+                  <h3>✅ Mark as Completed</h3>
+                  <p>Mark <strong>{user.name}</strong>'s order as completed/delivered?</p>
+                  <p>This will move the user to "Completed Tasks" and make it read-only.</p>
+                  <div className="modal-actions">
+                    <button 
+                      onClick={() => setCompleteConfirm(null)}
+                      className="btn-secondary"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      onClick={() => handleComplete(user.id)}
+                      className="btn-primary"
+                    >
+                      Mark Complete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Delete Confirmation Modal */}
             {deleteConfirm === user.id && (
