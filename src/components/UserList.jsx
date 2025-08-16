@@ -126,22 +126,6 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
               </div>
             )}
 
-            {/* 🔹 Add delivery & payment info */}
-            {(user.deliveryDate || user.paymentMode) && (
-              <div className="delivery-payment">
-                {user.deliveryDate && (
-                  <p>
-                    <strong>Delivery:</strong> {formatDate(user.deliveryDate)}
-                  </p>
-                )}
-                {user.paymentMode && (
-                  <p>
-                    <strong>Payment:</strong> {user.paymentMode}
-                  </p>
-                )}
-                  
-              </div>
-            )}
             {/* ========================= */}
 
             {user.notes && (
