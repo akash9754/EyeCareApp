@@ -1,10 +1,14 @@
-
-import React, { useState } from 'react';
-import { exportUserToPDF, exportAllUsersToPDF } from '../utils/pdfExport';
-import { exportToJSON, importFromJSON, clearAllData } from '../utils/dataManager';
+import React, { useState } from "react";
+import { exportUserToPDF, exportAllUsersToPDF } from "../utils/pdfExport";
+import {
+  exportToJSON,
+  importFromJSON,
+  clearAllData,
+} from "../utils/dataManager";
 
 const ExportManager = ({ users, onRefresh }) => {
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingJson, setIsExportingJson] = useState(false);
   const [importFile, setImportFile] = useState(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -13,8 +17,8 @@ const ExportManager = ({ users, onRefresh }) => {
     try {
       await exportUserToPDF(user);
     } catch (error) {
-      console.error('Failed to export user:', error);
-      alert('Failed to export user to PDF');
+      console.error("Failed to export user:", error);
+      alert("Failed to export user to PDF");
     } finally {
       setIsExporting(false);
     }
@@ -22,7 +26,7 @@ const ExportManager = ({ users, onRefresh }) => {
 
   const handleAllUsersExport = async () => {
     if (users.length === 0) {
-      alert('No users to export');
+      alert("No users to export");
       return;
     }
 
@@ -30,8 +34,8 @@ const ExportManager = ({ users, onRefresh }) => {
     try {
       await exportAllUsersToPDF(users);
     } catch (error) {
-      console.error('Failed to export all users:', error);
-      alert('Failed to export all users to PDF');
+      console.error("Failed to export all users:", error);
+      alert("Failed to export all users to PDF");
     } finally {
       setIsExporting(false);
     }
@@ -41,14 +45,14 @@ const ExportManager = ({ users, onRefresh }) => {
     try {
       await exportToJSON(users);
     } catch (error) {
-      console.error('Failed to export JSON:', error);
-      alert('Failed to export backup file');
+      console.error("Failed to export JSON:", error);
+      alert("Failed to export backup file");
     }
   };
 
   const handleJSONImport = async () => {
     if (!importFile) {
-      alert('Please select a file to import');
+      alert("Please select a file to import");
       return;
     }
 
@@ -56,10 +60,10 @@ const ExportManager = ({ users, onRefresh }) => {
       await importFromJSON(importFile);
       onRefresh();
       setImportFile(null);
-      alert('Data imported successfully!');
+      alert("Data imported successfully!");
     } catch (error) {
-      console.error('Failed to import JSON:', error);
-      alert('Failed to import data. Please check the file format.');
+      console.error("Failed to import JSON:", error);
+      alert("Failed to import data. Please check the file format.");
     }
   };
 
@@ -68,10 +72,10 @@ const ExportManager = ({ users, onRefresh }) => {
       await clearAllData();
       onRefresh();
       setShowClearConfirm(false);
-      alert('All data cleared successfully!');
+      alert("All data cleared successfully!");
     } catch (error) {
-      console.error('Failed to clear data:', error);
-      alert('Failed to clear data');
+      console.error("Failed to clear data:", error);
+      alert("Failed to clear data");
     }
   };
 
@@ -79,20 +83,22 @@ const ExportManager = ({ users, onRefresh }) => {
     <div className="export-manager">
       <h2>📄 Export & Backup</h2>
 
-      {/* PDF Export Section */}
+      {/* Json Export Section */}
       <section className="export-section">
         <h3>📑 PDF Export</h3>
-        <p>Export user prescriptions as PDF documents for printing or sharing.</p>
-        
+        <p>
+          Export user prescriptions as PDF documents for printing or sharing.
+        </p>
+
         <div className="export-actions">
-          <button 
+          <button
             onClick={handleAllUsersExport}
             disabled={isExporting || users.length === 0}
             className="btn-primary"
           >
-            {isExporting ? 'Exporting...' : '📄 Export All Users to PDF'}
+            {isExporting ? "Exporting..." : "📄 Export All Users to PDF"}
           </button>
-          
+
           {users.length === 0 && (
             <p className="help-text">No users available to export</p>
           )}
@@ -102,13 +108,13 @@ const ExportManager = ({ users, onRefresh }) => {
           <div className="user-export-list">
             <h4>Export Individual Users:</h4>
             <div className="user-export-grid">
-              {users.map(user => (
+              {users.map((user) => (
                 <div key={user.id} className="user-export-item">
                   <div className="user-info">
                     <strong>{user.name}</strong>
                     <span>#{user.clientCode}</span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => handleSingleUserExport(user)}
                     disabled={isExporting}
                     className="btn-secondary"
@@ -126,11 +132,11 @@ const ExportManager = ({ users, onRefresh }) => {
       <section className="export-section">
         <h3>💾 Data Backup</h3>
         <p>Create backups of your data or restore from previous backups.</p>
-        
+
         <div className="backup-actions">
           <div className="export-backup">
             <h4>Create Backup</h4>
-            <button 
+            <button
               onClick={handleJSONExport}
               disabled={users.length === 0}
               className="btn-primary"
@@ -159,7 +165,7 @@ const ExportManager = ({ users, onRefresh }) => {
                 <span className="file-name">{importFile.name}</span>
               )}
             </div>
-            <button 
+            <button
               onClick={handleJSONImport}
               disabled={!importFile}
               className="btn-secondary"
@@ -177,18 +183,16 @@ const ExportManager = ({ users, onRefresh }) => {
       <section className="export-section danger-section">
         <h3>⚠️ Data Management</h3>
         <p>Manage your stored data. Use with caution!</p>
-        
+
         <div className="danger-actions">
-          <button 
+          <button
             onClick={() => setShowClearConfirm(true)}
             className="btn-danger"
             disabled={users.length === 0}
           >
             🗑️ Clear All Data
           </button>
-          {users.length === 0 && (
-            <p className="help-text">No data to clear</p>
-          )}
+          {users.length === 0 && <p className="help-text">No data to clear</p>}
         </div>
 
         {/* Clear Confirmation Modal */}
@@ -197,19 +201,21 @@ const ExportManager = ({ users, onRefresh }) => {
             <div className="modal">
               <h3>⚠️ Clear All Data</h3>
               <p>Are you sure you want to delete ALL user data?</p>
-              <p>This will permanently remove {users.length} user(s) and cannot be undone!</p>
-              <p><strong>Consider creating a backup first.</strong></p>
+              <p>
+                This will permanently remove {users.length} user(s) and cannot
+                be undone!
+              </p>
+              <p>
+                <strong>Consider creating a backup first.</strong>
+              </p>
               <div className="modal-actions">
-                <button 
+                <button
                   onClick={() => setShowClearConfirm(false)}
                   className="btn-secondary"
                 >
                   Cancel
                 </button>
-                <button 
-                  onClick={handleClearAllData}
-                  className="btn-danger"
-                >
+                <button onClick={handleClearAllData} className="btn-danger">
                   Clear All Data
                 </button>
               </div>
@@ -233,10 +239,11 @@ const ExportManager = ({ users, onRefresh }) => {
           <div className="stat-item">
             <strong>Last Update:</strong>
             <span>
-              {users.length > 0 
-                ? new Date(Math.max(...users.map(u => new Date(u.updatedAt)))).toLocaleDateString()
-                : 'No data'
-              }
+              {users.length > 0
+                ? new Date(
+                    Math.max(...users.map((u) => new Date(u.updatedAt)))
+                  ).toLocaleDateString()
+                : "No data"}
             </span>
           </div>
         </div>

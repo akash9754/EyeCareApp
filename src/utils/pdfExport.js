@@ -1,194 +1,270 @@
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { formatDate, formatPrescription, sanitizeFileName } from "./helpers";
 
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import { formatDate, formatPrescription, sanitizeFileName } from './helpers';
+// const exportAllUsersToPDF = (users) => {
+//   const doc = new jsPDF();
 
-// Export single user to PDF
+//   doc.setFontSize(16);
+//   doc.text("Active Users Report", 14, 20);
+
+//   // Table data
+//   const tableData = users.map((user, i) => [
+//     i + 1, // Serial
+//     user.name,
+//     user.mobile,
+//     user.clientCode,
+//     user.totalAmount ? `₹${user.totalAmount}` : "—",
+//     user.advance ? `₹${user.advance}` : "—",
+//     user.due ? `₹${user.due}` : "—",
+//     user.deliveryDate ? new Date(user.deliveryDate).toLocaleDateString() : "—",
+//   ]);
+
+//   // Build table
+//   autoTable(doc, {
+//     head: [
+//       [
+//         "S.No",
+//         "Name",
+//         "Mobile",
+//         "Client Code",
+//         "Total Amount",
+//         "Advance",
+//         "Due",
+//         "Delivery Date",
+//       ],
+//     ],
+//     body: tableData,
+//     startY: 30,
+//     theme: "grid",
+//     headStyles: { fillColor: [63, 81, 181] },
+//     styles: { fontSize: 10 },
+//   });
+
+//   doc.save("users-report.pdf");
+// };
+
+// export { exportAllUsersToPDF };
+
+// import jsPDF from 'jspdf';
+// import autoTable from 'jspdf-autotable';
+// import { formatDate, formatPrescription, sanitizeFileName } from './helpers';
+
+// // Export single user to PDF
 export const exportUserToPDF = async (user) => {
   try {
     const doc = new jsPDF();
-    
+
     // Header
     doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.text('👓 EyeCare Manager', 20, 20);
-    
+    doc.setFont("helvetica", "bold");
+    doc.text("COCOLENS EyeCare", 20, 20);
+
     doc.setFontSize(16);
-    doc.text('Eyeglasses Prescription', 20, 35);
-    
+    doc.text("Eyeglasses Prescription", 20, 35);
+
     // User Information
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Patient Information:', 20, 55);
-    
-    doc.setFont('helvetica', 'normal');
+    doc.setFont("helvetica", "bold");
+    doc.text("Patient Information:", 20, 55);
+
+    doc.setFont("helvetica", "normal");
     const userInfo = [
-      ['Name:', user.name],
-      ['Client Code:', user.clientCode],
-      ['Mobile:', user.mobile],
-      ['Email:', user.email || 'Not provided'],
-      ['Date Created:', formatDate(user.createdAt)],
-      ['Last Updated:', formatDate(user.updatedAt)]
+      ["Name:", user.name],
+      ["Client Code:", user.clientCode],
+      ["Mobile:", user.mobile],
+      ["Email:", user.email || "Not provided"],
+      ["Total Amount:", `${user.totalAmount}` || "0"],
+      ["Advance:", `${user.advance}` || "0"],
+      ["Due:", `${user.due}` || "0"],
+      ["Date Created:", formatDate(user.createdAt)],
+      ["Last Updated:", formatDate(user.updatedAt)],
     ];
-    
+
     let yPos = 65;
     userInfo.forEach(([label, value]) => {
-      doc.setFont('helvetica', 'bold');
+      doc.setFont("helvetica", "bold");
       doc.text(label, 20, yPos);
-      doc.setFont('helvetica', 'normal');
+      doc.setFont("helvetica", "normal");
       doc.text(value, 80, yPos);
       yPos += 8;
     });
-    
+
     // Prescription Table
     yPos += 10;
-    doc.setFont('helvetica', 'bold');
-    doc.text('Prescription Details:', 20, yPos);
-    
+    doc.setFont("helvetica", "bold");
+    doc.text("Prescription Details:", 20, yPos);
+
     const prescriptionData = [
-      ['', 'Spherical (SPH)', 'Cylindrical (CYL)', 'Axis', 'Add Power'],
+      ["", "Spherical (SPH)", "Cylindrical (CYL)", "Axis", "Add Power"],
       [
-        'Right Eye (OD)',
-        user.rightEye.spherical || '-',
-        user.rightEye.cylindrical || '-',
-        user.rightEye.axis || '-',
-        user.rightEye.addPower || '-'
+        "Right Eye (OD)",
+        user.rightEye.spherical || "-",
+        user.rightEye.cylindrical || "-",
+        user.rightEye.axis || "-",
+        user.rightEye.addPower || "-",
       ],
       [
-        'Left Eye (OS)',
-        user.leftEye.spherical || '-',
-        user.leftEye.cylindrical || '-',
-        user.leftEye.axis || '-',
-        user.leftEye.addPower || '-'
-      ]
+        "Left Eye (OS)",
+        user.leftEye.spherical || "-",
+        user.leftEye.cylindrical || "-",
+        user.leftEye.axis || "-",
+        user.leftEye.addPower || "-",
+      ],
     ];
-    
+
     if (user.pupilDistance) {
-      prescriptionData.push(['Pupil Distance (PD)', user.pupilDistance + 'mm', '', '', '']);
+      prescriptionData.push([
+        "Pupil Distance (PD)",
+        user.pupilDistance + "mm",
+        "",
+        "",
+        "",
+      ]);
     }
-    
-    doc.autoTable({
+
+    autoTable(doc, {
       head: [prescriptionData[0]],
       body: prescriptionData.slice(1),
       startY: yPos + 10,
-      theme: 'grid',
+      theme: "grid",
       headStyles: { fillColor: [63, 81, 181] },
-      styles: { fontSize: 10 }
+      styles: { fontSize: 10 },
     });
-    
+
     // Notes section
     if (user.notes) {
       const finalY = doc.lastAutoTable.finalY + 15;
-      doc.setFont('helvetica', 'bold');
-      doc.text('Additional Notes:', 20, finalY);
-      doc.setFont('helvetica', 'normal');
-      
+      doc.setFont("helvetica", "bold");
+      doc.text("Additional Notes:", 20, finalY);
+      doc.setFont("helvetica", "normal");
+
       const splitNotes = doc.splitTextToSize(user.notes, 170);
       doc.text(splitNotes, 20, finalY + 10);
     }
-    
+
     // Footer
     const pageHeight = doc.internal.pageSize.height;
     doc.setFontSize(8);
-    doc.setFont('helvetica', 'italic');
-    doc.text('Generated by EyeCare Manager', 20, pageHeight - 20);
-    doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, pageHeight - 10);
-    
+    doc.setFont("helvetica", "italic");
+    doc.text("Generated by COCOLENS Manager", 20, pageHeight - 20);
+    doc.text(
+      `Generated on: ${new Date().toLocaleString()}`,
+      20,
+      pageHeight - 10
+    );
+
     // Save the PDF
-    const fileName = `prescription_${sanitizeFileName(user.name)}_${user.clientCode}.pdf`;
+    const fileName = `prescription_${sanitizeFileName(user.name)}_${
+      user.clientCode
+    }.pdf`;
     doc.save(fileName);
-    
-    console.log('PDF exported successfully:', fileName);
+
+    console.log("PDF exported successfully:", fileName);
   } catch (error) {
-    console.error('Failed to export PDF:', error);
+    console.error("Failed to export PDF:", error);
     throw error;
   }
 };
 
+// =======================================
 // Export all users to PDF
 export const exportAllUsersToPDF = async (users) => {
   try {
     const doc = new jsPDF();
-    
+
     // Header
     doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.text('👓 EyeCare Manager', 20, 20);
-    
+    doc.setFont("helvetica", "bold");
+    doc.text("COCOLENS EyeCare", 20, 20);
+
     doc.setFontSize(16);
-    doc.text('All Patients Report', 20, 35);
-    
+    doc.text("All Users list", 20, 35);
+
     doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
+    doc.setFont("helvetica", "normal");
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 45);
     doc.text(`Total Patients: ${users.length}`, 20, 52);
-    
+
     // Create table data
-    const tableData = users.map(user => [
+    const tableData = users.map((user) => [
       user.clientCode,
       user.name,
       user.mobile,
-      user.email || '-',
+      user.email || "-",
+      user.totalAmount || "-",
+      user.advance || "-",
+      user.due || "-",
       formatPrescription(user.rightEye),
       formatPrescription(user.leftEye),
-      user.pupilDistance ? user.pupilDistance + 'mm' : '-',
-      formatDate(user.createdAt)
+      user.pupilDistance ? user.pupilDistance + "mm" : "-",
+      formatDate(user.createdAt),
     ]);
-    
+
     // Create the table
-    doc.autoTable({
-      head: [[
-        'Client Code',
-        'Name',
-        'Mobile',
-        'Email',
-        'Right Eye',
-        'Left Eye',
-        'PD',
-        'Created'
-      ]],
+    autoTable(doc, {
+      head: [
+        [
+          "Client Code",
+          "Name",
+          "Mobile",
+          "Email",
+          "Total Amount",
+          "Advance",
+          "Due",
+          "Right Eye",
+          "Left Eye",
+          "PD",
+          "Created",
+        ],
+      ],
       body: tableData,
       startY: 60,
-      theme: 'grid',
-      headStyles: { 
+      theme: "grid",
+      headStyles: {
         fillColor: [63, 81, 181],
-        fontSize: 8
+        fontSize: 8,
       },
-      styles: { 
+      styles: {
         fontSize: 7,
-        cellPadding: 2
+        cellPadding: 2,
       },
       columnStyles: {
         0: { cellWidth: 15 }, // Client Code
-        1: { cellWidth: 20 }, // Name
+        1: { cellWidth: 18 }, // Name
         2: { cellWidth: 20 }, // Mobile
-        3: { cellWidth: 25 }, // Email
-        4: { cellWidth: 35 }, // Right Eye
-        5: { cellWidth: 35 }, // Left Eye
-        6: { cellWidth: 10 }, // PD
-        7: { cellWidth: 20 }  // Created
+        3: { cellWidth: 15 }, // Email
+        4: { cellWidth: 14 }, // amount
+        5: { cellWidth: 14 }, // advance
+        6: { cellWidth: 12 }, // due
+        7: { cellWidth: 25 }, // Right Eye
+        8: { cellWidth: 25 }, // Left Eye
+        9: { cellWidth: 10 }, // PD
+        10: { cellWidth: 20 }, // Created
       },
-      margin: { left: 10, right: 10 }
+      margin: { left: 10, right: 10 },
     });
-    
+
     // Add footer on each page
     const pageCount = doc.internal.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       const pageHeight = doc.internal.pageSize.height;
       doc.setFontSize(8);
-      doc.setFont('helvetica', 'italic');
-      doc.text('Generated by EyeCare Manager', 20, pageHeight - 15);
+      doc.setFont("helvetica", "italic");
+      doc.text("Generated by COCOLENS Manager", 20, pageHeight - 15);
       doc.text(`Page ${i} of ${pageCount}`, 20, pageHeight - 8);
     }
-    
+
     // Save the PDF
-    const fileName = `all_patients_${new Date().toISOString().split('T')[0]}.pdf`;
+    const fileName = `all_patients_${
+      new Date().toISOString().split("T")[0]
+    }.pdf`;
     doc.save(fileName);
-    
-    console.log('All users PDF exported successfully:', fileName);
+
+    console.log("All users PDF exported successfully:", fileName);
   } catch (error) {
-    console.error('Failed to export all users PDF:', error);
+    console.error("Failed to export all users PDF:", error);
     throw error;
   }
 };
@@ -196,48 +272,51 @@ export const exportAllUsersToPDF = async (users) => {
 // Export user summary (compact version)
 export const exportUserSummaryToPDF = async (user) => {
   try {
-    const doc = new jsPDF('p', 'mm', [80, 120]); // Small receipt-like format
-    
+    const doc = new jsPDF("p", "mm", [80, 120]); // Small receipt-like format
+
     // Header
     doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('EyeCare Manager', 5, 10);
-    
+    doc.setFont("helvetica", "bold");
+    doc.text("COCOLENS Manager", 5, 10);
+
     doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Prescription Summary', 5, 18);
-    
+    doc.setFont("helvetica", "normal");
+    doc.text("Prescription Summary", 5, 18);
+
     // User info
     doc.setFontSize(7);
     doc.text(`Name: ${user.name}`, 5, 28);
     doc.text(`Code: ${user.clientCode}`, 5, 33);
     doc.text(`Mobile: ${user.mobile}`, 5, 38);
-    
+    doc.text(`Price: ${user.totalAmount}`, 5, 28);
+    doc.text(`advance: ${user.advance}`, 5, 28);
+    doc.text(`Due: ${user.due}`, 5, 30);
+
     // Prescription
-    doc.text('Prescription:', 5, 48);
+    doc.text("Prescription:", 5, 48);
     doc.text(`OD: ${formatPrescription(user.rightEye)}`, 5, 53);
     doc.text(`OS: ${formatPrescription(user.leftEye)}`, 5, 58);
-    
+
     let yPosition = 63;
     if (user.pupilDistance) {
       doc.text(`PD: ${user.pupilDistance}mm`, 5, yPosition);
       yPosition += 5;
     }
-    
+
     if (user.frameOption) {
       doc.text(`Frame: ${user.frameOption}`, 5, yPosition);
       yPosition += 5;
     }
-    
+
     // Footer
     doc.text(`Date: ${formatDate(user.createdAt)}`, 5, yPosition + 7);
-    
+
     const fileName = `summary_${sanitizeFileName(user.name)}.pdf`;
     doc.save(fileName);
-    
-    console.log('Summary PDF exported successfully:', fileName);
+
+    console.log("Summary PDF exported successfully:", fileName);
   } catch (error) {
-    console.error('Failed to export summary PDF:', error);
+    console.error("Failed to export summary PDF:", error);
     throw error;
   }
 };
