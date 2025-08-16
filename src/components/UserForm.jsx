@@ -1,32 +1,37 @@
-
-import React, { useState, useEffect } from 'react';
-import { saveUser } from '../utils/database';
-import { generateClientCode } from '../utils/helpers';
+import React, { useState, useEffect } from "react";
+import { saveUser } from "../utils/database";
+import { generateClientCode } from "../utils/helpers";
 
 const UserForm = ({ user, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
-    clientCode: '',
-    name: '',
-    mobile: '',
-    email: '',
+    clientCode: "",
+    name: "",
+    mobile: "",
+    email: "",
     leftEye: {
-      spherical: '',
-      cylindrical: '',
-      axis: '',
-      addPower: ''
+      spherical: "",
+      cylindrical: "",
+      axis: "",
+      addPower: "",
     },
     rightEye: {
-      spherical: '',
-      cylindrical: '',
-      axis: '',
-      addPower: ''
+      spherical: "",
+      cylindrical: "",
+      axis: "",
+      addPower: "",
     },
-    pupilDistance: '',
-    frameOption: '',
-    notes: '',
-    status: 'active',
+
+    pupilDistance: "",
+    frameOption: "",
+
+    totalAmount: "",
+    givenAmount: "",
+    remainingAmount: "",
+
+    notes: "",
+    status: "active",
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   });
 
   const [errors, setErrors] = useState({});
@@ -34,34 +39,34 @@ const UserForm = ({ user, onSave, onCancel }) => {
 
   useEffect(() => {
     if (user) {
-      setFormData({ 
+      setFormData({
         ...user,
-        status: user.status || 'active'
+        status: user.status || "active",
       });
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         clientCode: generateClientCode(),
-        status: 'active'
+        status: "active",
       }));
     }
   }, [user]);
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = "Name is required";
     }
-    
+
     if (!formData.mobile.trim()) {
-      newErrors.mobile = 'Mobile number is required';
+      newErrors.mobile = "Mobile number is required";
     } else if (!/^\+?[\d\s-()]+$/.test(formData.mobile)) {
-      newErrors.mobile = 'Invalid mobile number format';
+      newErrors.mobile = "Invalid mobile number format";
     }
-    
+
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Invalid email format';
+      newErrors.email = "Invalid email format";
     }
 
     setErrors(newErrors);
@@ -70,48 +75,48 @@ const UserForm = ({ user, onSave, onCancel }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name.includes('.')) {
-      const [eye, field] = name.split('.');
-      setFormData(prev => ({
+
+    if (name.includes(".")) {
+      const [eye, field] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
         [eye]: {
           ...prev[eye],
-          [field]: value
-        }
+          [field]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const dataToSave = {
         ...formData,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
-      
+
       if (!user) {
         dataToSave.createdAt = new Date().toISOString();
       }
-      
+
       await saveUser(dataToSave);
       onSave();
     } catch (error) {
-      console.error('Failed to save user:', error);
-      alert('Failed to save user. Please try again.');
+      console.error("Failed to save user:", error);
+      alert("Failed to save user. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -119,13 +124,13 @@ const UserForm = ({ user, onSave, onCancel }) => {
 
   return (
     <div className="user-form">
-      <h2>{user ? '✏️ Edit User' : '➕ Add New User'}</h2>
-      
+      <h2>{user ? "✏️ Edit User" : "➕ Add New User"}</h2>
+
       <form onSubmit={handleSubmit}>
         {/* Basic Information */}
         <section className="form-section">
           <h3>📝 Basic Information</h3>
-          
+
           <div className="form-group">
             <label htmlFor="clientCode">Client Code</label>
             <input
@@ -146,7 +151,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className={errors.name ? 'error' : ''}
+              className={errors.name ? "error" : ""}
               required
             />
             {errors.name && <span className="error-text">{errors.name}</span>}
@@ -160,10 +165,12 @@ const UserForm = ({ user, onSave, onCancel }) => {
               name="mobile"
               value={formData.mobile}
               onChange={handleInputChange}
-              className={errors.mobile ? 'error' : ''}
+              className={errors.mobile ? "error" : ""}
               required
             />
-            {errors.mobile && <span className="error-text">{errors.mobile}</span>}
+            {errors.mobile && (
+              <span className="error-text">{errors.mobile}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -174,7 +181,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className={errors.email ? 'error' : ''}
+              className={errors.email ? "error" : ""}
             />
             {errors.email && <span className="error-text">{errors.email}</span>}
           </div>
@@ -183,7 +190,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
         {/* Prescription Data */}
         <section className="form-section">
           <h3>👁️ Prescription Data</h3>
-          
+
           {/* Left Eye */}
           <div className="eye-section">
             <h4>Left Eye (OS)</h4>
@@ -200,7 +207,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
                   placeholder="e.g., -2.50"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="leftEye.cylindrical">Cylindrical (CYL)</label>
                 <input
@@ -213,7 +220,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
                   placeholder="e.g., -1.00"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="leftEye.axis">Axis</label>
                 <input
@@ -227,7 +234,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
                   placeholder="1-180°"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="leftEye.addPower">Add Power</label>
                 <input
@@ -259,7 +266,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
                   placeholder="e.g., -2.50"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="rightEye.cylindrical">Cylindrical (CYL)</label>
                 <input
@@ -272,7 +279,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
                   placeholder="e.g., -1.00"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="rightEye.axis">Axis</label>
                 <input
@@ -286,7 +293,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
                   placeholder="1-180°"
                 />
               </div>
-              
+
               <div className="form-group">
                 <label htmlFor="rightEye.addPower">Add Power</label>
                 <input
@@ -327,6 +334,7 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <option value="Supra metal">Supra metal</option>
               <option value="Sheet">Sheet</option>
               <option value="Metal">Metal</option>
+              <option value="FullMetal">Full Metal</option>
               <option value="Sheetmetal">Sheetmetal</option>
               <option value="Rimless">Rimless</option>
             </select>
@@ -351,20 +359,16 @@ const UserForm = ({ user, onSave, onCancel }) => {
 
         {/* Form Actions */}
         <div className="form-actions">
-          <button 
-            type="button" 
+          <button
+            type="button"
             onClick={onCancel}
             className="btn-secondary"
             disabled={isSubmitting}
           >
             Cancel
           </button>
-          <button 
-            type="submit"
-            className="btn-primary"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Saving...' : (user ? 'Update User' : 'Add User')}
+          <button type="submit" className="btn-primary" disabled={isSubmitting}>
+            {isSubmitting ? "Saving..." : user ? "Update User" : "Add User"}
           </button>
         </div>
       </form>
