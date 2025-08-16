@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { deleteUser, markUserAsCompleted } from '../utils/database';
+import React, { useState, useEffect } from "react";
+import { deleteUser, markUserAsCompleted } from "../utils/database";
 
 const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [completeConfirm, setCompleteConfirm] = useState(null);
 
   // Filter only active users
-  const activeUsers = users.filter(user => (user.status || 'active') === 'active');
+  const activeUsers = users.filter(
+    (user) => (user.status || "active") === "active"
+  );
 
   const handleDelete = async (userId) => {
     try {
@@ -14,8 +16,8 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
       onRefresh();
       setDeleteConfirm(null);
     } catch (error) {
-      console.error('Failed to delete user:', error);
-      alert('Failed to delete user. Please try again.');
+      console.error("Failed to delete user:", error);
+      alert("Failed to delete user. Please try again.");
     }
   };
 
@@ -25,8 +27,8 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
       onRefresh();
       setCompleteConfirm(null);
     } catch (error) {
-      console.error('Failed to mark user as completed:', error);
-      alert('Failed to mark user as completed. Please try again.');
+      console.error("Failed to mark user as completed:", error);
+      alert("Failed to mark user as completed. Please try again.");
     }
   };
 
@@ -40,7 +42,7 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
     if (eye.cylindrical) parts.push(`CYL: ${eye.cylindrical}`);
     if (eye.axis) parts.push(`AXIS: ${eye.axis}°`);
     if (eye.addPower) parts.push(`ADD: ${eye.addPower}`);
-    return parts.length > 0 ? parts.join(', ') : 'No prescription data';
+    return parts.length > 0 ? parts.join(", ") : "No prescription data";
   };
 
   if (activeUsers.length === 0) {
@@ -67,7 +69,7 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
       </div>
 
       <div className="users-grid">
-        {activeUsers.map(user => (
+        {activeUsers.map((user) => (
           <div key={user.id} className="user-card">
             <div className="user-header">
               <h3>{user.name}</h3>
@@ -97,8 +99,50 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
             </div>
 
             {user.frameOption && (
-              <p><strong>Frame:</strong> {user.frameOption}</p>
+              <p>
+                <strong>Frame:</strong> {user.frameOption}
+              </p>
             )}
+
+            {/* ========================= */}
+            {/* 🔹 Add billing details */}
+            {(user.totalAmount || user.advance || user.due) && (
+              <div className="billing-info">
+                {user.totalAmount && (
+                  <p>
+                    <strong>Total:</strong> ₹{user.totalAmount}
+                  </p>
+                )}
+                {user.advance && (
+                  <p>
+                    <strong>Advance:</strong> ₹{user.advance}
+                  </p>
+                )}
+                {user.due && (
+                  <p>
+                    <strong>Due:</strong> ₹{user.due}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* 🔹 Add delivery & payment info */}
+            {(user.deliveryDate || user.paymentMode) && (
+              <div className="delivery-payment">
+                {user.deliveryDate && (
+                  <p>
+                    <strong>Delivery:</strong> {formatDate(user.deliveryDate)}
+                  </p>
+                )}
+                {user.paymentMode && (
+                  <p>
+                    <strong>Payment:</strong> {user.paymentMode}
+                  </p>
+                )}
+                  
+              </div>
+            )}
+            {/* ========================= */}
 
             {user.notes && (
               <div className="user-notes">
@@ -115,20 +159,17 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
             </div>
 
             <div className="user-actions">
-              <button 
-                onClick={() => onEdit(user)}
-                className="btn-secondary"
-              >
+              <button onClick={() => onEdit(user)} className="btn-secondary">
                 ✏️ Edit
               </button>
-              <button 
+              <button
                 onClick={() => setCompleteConfirm(user.id)}
                 className="btn-primary"
                 title="Mark as completed/delivered"
               >
                 ✅ Complete
               </button>
-              <button 
+              <button
                 onClick={() => setDeleteConfirm(user.id)}
                 className="btn-danger"
               >
@@ -141,16 +182,22 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
               <div className="modal-overlay">
                 <div className="modal">
                   <h3>✅ Mark as Completed</h3>
-                  <p>Mark <strong>{user.name}</strong>'s order as completed/delivered?</p>
-                  <p>This will move the user to "Completed Tasks" and make it read-only.</p>
+                  <p>
+                    Mark <strong>{user.name}</strong>'s order as
+                    completed/delivered?
+                  </p>
+                  <p>
+                    This will move the user to "Completed Tasks" and make it
+                    read-only.
+                  </p>
                   <div className="modal-actions">
-                    <button 
+                    <button
                       onClick={() => setCompleteConfirm(null)}
                       className="btn-secondary"
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleComplete(user.id)}
                       className="btn-primary"
                     >
@@ -166,16 +213,19 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
               <div className="modal-overlay">
                 <div className="modal">
                   <h3>⚠️ Confirm Delete</h3>
-                  <p>Are you sure you want to delete <strong>{user.name}</strong>?</p>
+                  <p>
+                    Are you sure you want to delete <strong>{user.name}</strong>
+                    ?
+                  </p>
                   <p>This action cannot be undone.</p>
                   <div className="modal-actions">
-                    <button 
+                    <button
                       onClick={() => setDeleteConfirm(null)}
                       className="btn-secondary"
                     >
                       Cancel
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(user.id)}
                       className="btn-danger"
                     >

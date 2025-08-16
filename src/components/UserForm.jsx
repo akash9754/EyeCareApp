@@ -25,8 +25,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
     frameOption: "",
 
     totalAmount: "",
-    givenAmount: "",
-    remainingAmount: "",
+    advance: "",
+    due: "",
 
     notes: "",
     status: "active",
@@ -92,6 +92,25 @@ const UserForm = ({ user, onSave, onCancel }) => {
       }));
     }
   };
+
+  // =================================
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => {
+      let updated = { ...prev, [name]: value };
+
+      if (name === "totalAmount" || name === "advance") {
+        const total = parseFloat(updated.totalAmount) || 0;
+        const given = parseFloat(updated.advance) || 0;
+        updated.due = total - given;
+      }
+
+      updated.updatedAt = new Date().toISOString();
+      return updated;
+    });
+  };
+  // =================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -339,6 +358,53 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <option value="Rimless">Rimless</option>
             </select>
           </div>
+
+          {/* ============ */}
+          <div className="form-group">
+            <label>Total Amount</label>
+            <input
+              type="number"
+              value={formData.totalAmount}
+              onChange={(e) => {
+                const total = parseFloat(e.target.value) || 0;
+                setFormData({
+                  ...formData,
+                  totalAmount: total,
+                  due: total - parseFloat(formData.advance || 0),
+                });
+              }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Advance</label>
+            <input
+              type="number"
+              value={formData.advance}
+              onChange={(e) => {
+                const adv = parseFloat(e.target.value) || 0;
+                setFormData({
+                  ...formData,
+                  advance: adv,
+                  due: parseFloat(formData.totalAmount || 0) - adv,
+                });
+              }}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Due</label>
+            <input
+              type="number"
+              // value={formData.due}
+              value={formData.due}
+              readOnly
+              // onChange={(e) =>
+              // setFormData({ ...formData, due: e.target.value })
+              // }
+            />
+          </div>
+          {/* ============ */}
         </section>
 
         {/* Additional Notes */}
