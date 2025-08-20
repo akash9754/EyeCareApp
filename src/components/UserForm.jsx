@@ -217,7 +217,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="leftEye.spherical">Spherical (SPH)</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   step="0.25"
                   id="leftEye.spherical"
                   name="leftEye.spherical"
@@ -230,7 +231,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="leftEye.cylindrical">Cylindrical (CYL)</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for '+' sign in number
                   step="0.25"
                   id="leftEye.cylindrical"
                   name="leftEye.cylindrical"
@@ -243,7 +245,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="leftEye.axis">Axis</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   min="1"
                   max="180"
                   id="leftEye.axis"
@@ -257,7 +260,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="leftEye.addPower">Add Power</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   step="0.25"
                   id="leftEye.addPower"
                   name="leftEye.addPower"
@@ -276,7 +280,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="rightEye.spherical">Spherical (SPH)</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   step="0.25"
                   id="rightEye.spherical"
                   name="rightEye.spherical"
@@ -289,7 +294,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="rightEye.cylindrical">Cylindrical (CYL)</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   step="0.25"
                   id="rightEye.cylindrical"
                   name="rightEye.cylindrical"
@@ -302,7 +308,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="rightEye.axis">Axis</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   min="1"
                   max="180"
                   id="rightEye.axis"
@@ -316,7 +323,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
               <div className="form-group">
                 <label htmlFor="rightEye.addPower">Add Power</label>
                 <input
-                  type="number"
+                  // type="number"
+                  type="tel" //for + sign in number
                   step="0.25"
                   id="rightEye.addPower"
                   name="rightEye.addPower"
@@ -331,7 +339,8 @@ const UserForm = ({ user, onSave, onCancel }) => {
           <div className="form-group">
             <label htmlFor="pupilDistance">Pupil Distance (PD)</label>
             <input
-              type="number"
+              // type="number"
+              type="tel" //for + sign in number
               step="0.5"
               id="pupilDistance"
               name="pupilDistance"
