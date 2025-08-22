@@ -26,6 +26,7 @@
     "@capacitor/core": "^7.4.2",
     "@capacitor/filesystem": "^7.1.4",
     "@capacitor/share": "^7.0.2",
+    "@capawesome/capacitor-file-picker": "^7.2.0",
     "@types/uuid": "^10.0.0",
     "idb": "^8.0.3",
     "jspdf": "^3.0.1",

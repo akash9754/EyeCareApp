@@ -1,18 +1,17 @@
-
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import UserForm from './components/UserForm';
-import UserList from './components/UserList';
-import UserSearch from './components/UserSearch';
-import ExportManager from './components/ExportManager';
-import CompletedTasks from './components/CompletedTasks';
-import { initDB, getAllUsers } from './utils/database';
-import { registerSW } from './utils/serviceWorker';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import UserForm from "./components/UserForm";
+import UserList from "./components/UserList";
+import UserSearch from "./components/UserSearch";
+import ExportManager from "./components/ExportManager";
+import CompletedTasks from "./components/CompletedTasks";
+import { initDB, getAllUsers } from "./utils/database";
+import { registerSW } from "./utils/serviceWorker";
 
 export default function App() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [activeTab, setActiveTab] = useState('list');
+  const [activeTab, setActiveTab] = useState("list");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function App() {
       await loadUsers();
       registerSW();
     } catch (error) {
-      console.error('Failed to initialize app:', error);
+      console.error("Failed to initialize app:", error);
     } finally {
       setIsLoading(false);
     }
@@ -37,27 +36,25 @@ export default function App() {
       const allUsers = await getAllUsers();
       setUsers(allUsers);
     } catch (error) {
-      console.error('Failed to load users:', error);
+      console.error("Failed to load users:", error);
     }
   };
 
   const handleUserSaved = () => {
     loadUsers();
-    setActiveTab('list');
+    setActiveTab("list");
     setSelectedUser(null);
   };
 
   const handleEditUser = (user) => {
     setSelectedUser(user);
-    setActiveTab('form');
+    setActiveTab("form");
   };
 
   const handleAddUser = () => {
     setSelectedUser(null);
-    setActiveTab('form');
+    setActiveTab("form");
   };
-
-  
 
   if (isLoading) {
     return (
@@ -78,77 +75,67 @@ export default function App() {
       </header>
 
       <nav className="app-nav">
-        <button 
-          className={activeTab === 'list' ? 'active' : ''}
-          onClick={() => setActiveTab('list')}
+        <button
+          className={activeTab === "list" ? "active" : ""}
+          onClick={() => setActiveTab("list")}
         >
           📋 Active
         </button>
-        <button 
-          className={activeTab === 'completed' ? 'active' : ''}
-          onClick={() => setActiveTab('completed')}
+        <button
+          className={activeTab === "completed" ? "active" : ""}
+          onClick={() => setActiveTab("completed")}
         >
           ✅ Completed
         </button>
-        <button 
-          className={activeTab === 'form' ? 'active' : ''}
-          onClick={() => setActiveTab('form')}
+        <button
+          className={activeTab === "form" ? "active" : ""}
+          onClick={() => setActiveTab("form")}
         >
           ➕ Add User
         </button>
-        <button 
-          className={activeTab === 'search' ? 'active' : ''}
-          onClick={() => setActiveTab('search')}
+        <button
+          className={activeTab === "search" ? "active" : ""}
+          onClick={() => setActiveTab("search")}
         >
           🔍 Search
         </button>
-        <button 
-          className={activeTab === 'export' ? 'active' : ''}
-          onClick={() => setActiveTab('export')}
+        <button
+          className={activeTab === "export" ? "active" : ""}
+          onClick={() => setActiveTab("export")}
         >
           📄 Export
         </button>
       </nav>
 
       <main className="app-main">
-        {activeTab === 'list' && (
-          <UserList 
+        {activeTab === "list" && (
+          <UserList
             users={users}
             onEdit={handleEditUser}
             onRefresh={loadUsers}
             onAddUser={handleAddUser}
           />
         )}
-        
-        {activeTab === 'completed' && (
-          <CompletedTasks 
-            onRefresh={loadUsers}
-          />
-        )}
-        
-        {activeTab === 'form' && (
-          <UserForm 
+
+        {activeTab === "completed" && <CompletedTasks onRefresh={loadUsers} />}
+
+        {activeTab === "form" && (
+          <UserForm
             user={selectedUser}
             onSave={handleUserSaved}
             onCancel={() => {
-              setActiveTab('list');
+              setActiveTab("list");
               setSelectedUser(null);
             }}
           />
         )}
-        
-        {activeTab === 'search' && (
-          <UserSearch 
-            users={users}
-            onEdit={handleEditUser}
-          />
+
+        {activeTab === "search" && (
+          <UserSearch users={users} onEdit={handleEditUser} />
         )}
-        
-        {activeTab === 'export' && (
-          <ExportManager 
-            users={users}
-            onRefresh={loadUsers}
-          />
+
+        {activeTab === "export" && (
+          <ExportManager users={users} onRefresh={loadUsers} />
         )}
       </main>
 
