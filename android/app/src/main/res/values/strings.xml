@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">eye-care</string>
-    <string name="title_activity_main">eye-care</string>
+    <string name="app_name">COCOLENS</string>
+    <string name="title_activity_main">COCOLENS</string>
     <string name="package_name">com.eyecare.in</string>
     <string name="custom_url_scheme">com.eyecare.in</string>
 </resources>

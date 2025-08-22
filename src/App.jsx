@@ -70,8 +70,8 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>👓 EyeCare Manager</h1>
-        <p>Manage eyeglasses prescriptions offline</p>
+        <h2>COCOLENS</h2>
+        <p>See Clear Look Better</p>
       </header>
 
       <nav className="app-nav">
@@ -140,7 +140,10 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <p>EyeCare Manager - Works Offline 📱💻🖥️</p>
+        <p>
+          {" "}
+          COCOLENS <br></br> See Clear Look Better
+        </p>
         <p>Total Users: {users.length}</p>
       </footer>
     </div>

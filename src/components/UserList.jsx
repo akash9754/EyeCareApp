@@ -52,7 +52,7 @@ const UserList = ({ users, onEdit, onRefresh, onAddUser }) => {
           <h2>👓 No Users Found</h2>
           <p>Start by adding your first eyeglasses prescription</p>
           <button onClick={onAddUser} className="btn-primary">
-            ➕ Add First User
+            ➕ Add New User
           </button>
         </div>
       </div>
